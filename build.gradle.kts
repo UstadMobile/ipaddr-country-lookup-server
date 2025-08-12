@@ -1,25 +1,35 @@
 plugins {
+    application
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.ktor)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "com.example"
 version = "0.0.1"
 
 application {
-    mainClass = "io.ktor.server.netty.EngineMain"
+    mainClass.set("com.example.ApplicationKt")
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
-    implementation(libs.ktor.server.caching.headers)
-    implementation(libs.ktor.server.default.headers)
+    // Ktor server core dependencies (from bundle)
+    implementation(libs.bundles.ktor.server)
+
+    // Additional Ktor features
     implementation(libs.ktor.server.cors)
-    implementation(libs.ktor.server.content.negotiation)
-    implementation(libs.ktor.server.core)
-    implementation(libs.ktor.serialization.jackson)
-    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.default.headers)
+    implementation(libs.ktor.server.caching.headers)
+
+    // Logging
     implementation(libs.logback.classic)
-    implementation(libs.ktor.server.config.yaml)
-    testImplementation(libs.ktor.server.test.host)
-    testImplementation(libs.kotlin.test.junit)
+
+    // GeoIP2
+    implementation(libs.maxmind.geoip2)
+
+    // Testing (from bundle)
+    testImplementation(libs.bundles.ktor.testing)
 }
