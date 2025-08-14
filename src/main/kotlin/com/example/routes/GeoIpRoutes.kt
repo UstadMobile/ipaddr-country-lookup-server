@@ -19,7 +19,6 @@ fun Route.configureGeoIpRoutes() {
 }
 
 private fun getClientIpAddress(call: ApplicationCall): String {
-    // Check for X-Forwarded-For header (common in load balancer setups)
     val xForwardedFor = call.request.header(X_FORWARDED_FOR_HEADER)
     if (xForwardedFor != null) {
         val firstIp = xForwardedFor.split(",").firstOrNull()?.trim()
@@ -28,13 +27,11 @@ private fun getClientIpAddress(call: ApplicationCall): String {
         }
     }
 
-    // Check for X-Real-IP header (common in nginx setups)
     val xRealIp = call.request.header(X_REAL_IP_HEADER)
     if (xRealIp != null && xRealIp.isNotBlank()) {
         return xRealIp
     }
 
-    // Fallback to remote host from the call
     return call.request.local.remoteHost
 }
 
