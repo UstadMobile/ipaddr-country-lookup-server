@@ -33,3 +33,7 @@ dependencies {
     // Testing (from bundle)
     testImplementation(libs.bundles.ktor.testing)
 }
+// Pass GEO_DATABASE_PATH to the run task JVM environment
+tasks.named<JavaExec>("run") {
+    environment("GEO_DATABASE_PATH", System.getenv("GEO_DATABASE_PATH") ?: "/home/user/databases/GeoLite2-Country.mmdb")
+}

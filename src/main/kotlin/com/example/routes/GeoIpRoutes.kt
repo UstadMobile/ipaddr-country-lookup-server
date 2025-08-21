@@ -5,15 +5,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.request.*
 import com.example.service.GeoIpService
-import com.example.usecase.GetCountryForIpUseCase
 
-fun Route.configureGeoIpRoutes() {
-    val geoIpService = GeoIpService()
-    val getCountryForIpUseCase = GetCountryForIpUseCase(geoIpService)
-
+fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
     get(COUNTRY_ENDPOINT_PATH) {
         val clientIp = getClientIpAddress(call)
-        val countryResponse = getCountryForIpUseCase.execute(clientIp)
+        val countryResponse = geoIpService.getCountryForIp(clientIp)
         call.respond(countryResponse)
     }
 }
