@@ -36,9 +36,11 @@ To build or run the project, use one of the following tasks:
 | `runDocker`                   | Run using the local docker image                                     |
 
 ## Set Up GeoLite2 Database
+
 ⚠️ Important: The GeoIP database file is NOT included in this repository and must be downloaded separately.
 Option A: Automated Setup (Recommended)
 ----------------------------------------
+chmod +x setup.sh
 ./setup.sh
 
 This script will guide you through:
