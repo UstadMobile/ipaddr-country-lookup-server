@@ -35,6 +35,26 @@ To build or run the project, use one of the following tasks:
 | `run`                         | Run the server                                                       |
 | `runDocker`                   | Run using the local docker image                                     |
 
+## Set Up GeoLite2 Database
+⚠️ Important: The GeoIP database file is NOT included in this repository and must be downloaded separately.
+Option A: Automated Setup (Recommended)
+----------------------------------------
+./setup.sh
+
+This script will guide you through:
+
+Creating a free MaxMind account
+Downloading the GeoLite2 database
+Placing it in the correct location
+-------------------------------------------
+Option B: Manual Setup
+
+ Create MaxMind Account (free): https://www.maxmind.com/en/geolite2/signup
+ Download Database: Get GeoLite2-Country.mmdb in binary format
+ Place the file:
+ mkdir -p src/main/resources
+ cp ~/Downloads/GeoLite2-Country.mmdb src/main/resources/
+
 If the server starts successfully, you'll see the following output:
 
 ```
@@ -48,5 +68,3 @@ This project is licensed under the MIT License.
 ## Attribution
 
 This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com).
-
-
