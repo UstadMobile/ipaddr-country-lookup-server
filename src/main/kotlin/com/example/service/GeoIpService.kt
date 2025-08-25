@@ -31,6 +31,11 @@ class GeoIpService(databasePath: String) {
 
         return try {
             val inetAddress = InetAddress.getByName(ipAddress)
+
+            if (inetAddress.isLoopbackAddress || inetAddress.isSiteLocalAddress) {
+                logger.warn("IP address $ipAddress is local or private — rejecting")
+                throw IllegalArgumentException("Local or private IP addresses are not allowed: $ipAddress")
+            }
             val response = databaseReader.country(inetAddress)
             val countryCode = response.country?.isoCode
 
@@ -56,7 +61,7 @@ class GeoIpService(databasePath: String) {
 
         } catch (e: Exception) {
             logger.error("Unexpected error looking up country for IP: $ipAddress", e)
-            throw e
+            throw RuntimeException("Internal error resolving IP: $ipAddress", e)
         }
     }
 
