@@ -6,7 +6,6 @@ import com.maxmind.geoip2.exception.AddressNotFoundException
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.InetAddress
-
 class GeoIpService(databasePath: String) {
 
     private val databaseReader: DatabaseReader

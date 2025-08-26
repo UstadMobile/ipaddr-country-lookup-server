@@ -5,7 +5,6 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.example.plugins.*
 import com.example.service.GeoIpService
-
 fun main() {
     embeddedServer(Netty, port = SERVER_PORT, host = SERVER_HOST, module = Application::module)
         .start(wait = true)
