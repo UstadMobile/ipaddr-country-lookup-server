@@ -16,24 +16,31 @@ repositories {
 }
 
 dependencies {
-    // Ktor server core dependencies (from bundle)
     implementation(libs.bundles.ktor.server)
-
-    // Additional Ktor features
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.default.headers)
     implementation(libs.ktor.server.caching.headers)
-
-    // Logging
+    implementation(libs.ktor.server.status.pages)
     implementation(libs.logback.classic)
-
-    // GeoIP2
     implementation(libs.maxmind.geoip2)
-
-    // Testing (from bundle)
     testImplementation(libs.bundles.ktor.testing)
+    testImplementation(libs.mockk)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.ktor.client.content.negotiation)
 }
-// Pass GEO_DATABASE_PATH to the run task JVM environment
-tasks.named<JavaExec>("run") {
-    environment("GEO_DATABASE_PATH", System.getenv("GEO_DATABASE_PATH") ?: "/home/user/databases/GeoLite2-Country.mmdb")
+tasks.withType<Test> {
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showStandardStreams = false
+    }
+
+    systemProperty("file.encoding", "UTF-8")
+
+    jvmArgs("-Xmx1g", "-XX:+UseG1GC")
+
+    failFast = true
 }
+
