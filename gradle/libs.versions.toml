@@ -3,6 +3,9 @@ kotlin = "1.9.22"
 ktor = "2.3.7"
 logback = "1.4.14"
 geoip2 = "4.0.1"
+mockk = "1.13.8"
+ktor-client-content-negotiation = "2.3.7"
+junit = "5.10.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -22,6 +25,11 @@ ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "k
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 maxmind-geoip2 = { module = "com.maxmind.geoip2:geoip2", version.ref = "geoip2" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor-client-content-negotiation" }
+
 
 [bundles]
 ktor-server = [
