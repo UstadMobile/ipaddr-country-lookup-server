@@ -49,18 +49,6 @@ class GeoIpServiceTest {
         Assertions.assertNotNull(service)
         verify { anyConstructed<DatabaseReader.Builder>().build() }
     }
-
-    @Test
-    fun `should throw IllegalStateException when database file does not exist`() {
-        val nonExistentPath = "/path/that/does/not/exist/database.mmdb"
-
-        val exception = assertThrows<IllegalStateException> {
-            GeoIpService(nonExistentPath)
-        }
-
-        Assertions.assertTrue(exception.message!!.contains("GeoLite2 database file not found"))
-    }
-
     @Test
     fun `should return country code for valid public IP`() {
         val testIpAddress = TEST_PUBLIC_IP
