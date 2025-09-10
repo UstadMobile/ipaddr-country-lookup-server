@@ -4,11 +4,11 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-group = "com.example"
+group = "com.ustadmobile.countrylookupserver"
 version = "0.0.1"
 
 application {
-    mainClass.set("com.example.ApplicationKt")
+    mainClass.set("com.ustadmobile.countrylookupserver.ApplicationKt")
 }
 
 repositories {
