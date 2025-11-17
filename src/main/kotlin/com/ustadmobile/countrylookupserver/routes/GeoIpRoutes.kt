@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
     val logger = LoggerFactory.getLogger("GeoIpRoutes")
 
-    get("/json/{host}") {
+    get("/api/country/{host}") {
         val host = call.parameters["host"]
         logger.debug("Processing request for host: $host")
 
