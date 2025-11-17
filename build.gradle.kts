@@ -7,6 +7,10 @@ plugins {
 group = "com.ustadmobile.countrylookupserver"
 version = "0.0.1"
 
+kotlin {
+    jvmToolchain(17)
+}
+
 application {
     mainClass.set("com.ustadmobile.countrylookupserver.ApplicationKt")
 }
@@ -28,6 +32,7 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.ktor.client.content.negotiation)
 }
+
 tasks.withType<Test> {
     useJUnitPlatform()
 
@@ -41,3 +46,10 @@ tasks.withType<Test> {
     failFast = true
 }
 
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "com.ustadmobile.countrylookupserver.ApplicationKt"
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}

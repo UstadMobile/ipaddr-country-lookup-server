@@ -4,5 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CountryResponse(
-    val country: String
+    val status: String,
+    val countryCode: String? = null,
+    val country: String? = null,
+    val message: String? = null,
+    val query: String? = null
 )

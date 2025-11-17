@@ -10,119 +10,130 @@ import kotlinx.serialization.json.*
 class ApplicationTest {
     @Test
     fun testCountryEndpointWithValidPublicIp() = testApplication {
-        val response = client.get("/country") {
-            header("X-Forwarded-For", GOOGLE_DNS_IP)
-        }
+        val response = client.get("/json/${GOOGLE_DNS_IP}")
         assertEquals(HttpStatusCode.OK, response.status)
 
         val responseBody = response.bodyAsText()
         val json = Json.parseToJsonElement(responseBody).jsonObject
-        assertTrue(json.containsKey("country"))
-
-        val countryValue = json["country"]?.jsonPrimitive?.content
-        assertNotNull(countryValue)
-        assertEquals(EXPECTED_US_COUNTRY_CODE, countryValue)
+        assertEquals("success", json["status"]?.jsonPrimitive?.content)
+        assertEquals(EXPECTED_US_COUNTRY_CODE, json["countryCode"]?.jsonPrimitive?.content)
+        assertEquals(GOOGLE_DNS_IP, json["query"]?.jsonPrimitive?.content)
     }
 
     @Test
     fun testCountryEndpointWithCloudflareIp() = testApplication {
-        val response = client.get("/country") {
-            header("X-Forwarded-For", CLOUDFLARE_DNS_IP)
-        }
-        assertEquals(HttpStatusCode.NotFound, response.status)
+        val response = client.get("/json/${CLOUDFLARE_DNS_IP}")
+        assertEquals(HttpStatusCode.OK, response.status)
 
         val responseBody = response.bodyAsText()
-        assertTrue(responseBody.contains("Could not determine country for IP"))
+        val json = Json.parseToJsonElement(responseBody).jsonObject
+        assertEquals("success", json["status"]?.jsonPrimitive?.content)
+        assertNotNull(json["countryCode"]?.jsonPrimitive?.content)
+        assertEquals(CLOUDFLARE_DNS_IP, json["query"]?.jsonPrimitive?.content)
     }
 
     @Test
     fun testCountryEndpointWithLocalIpAddress() = testApplication {
-        val response = client.get("/country") {
-            header("X-Forwarded-For", LOCALHOST_IP)
-        }
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        val response = client.get("/json/${LOCALHOST_IP}")
+        assertEquals(HttpStatusCode.OK, response.status)
 
         val responseBody = response.bodyAsText()
-        assertTrue(responseBody.contains("Local or private IP addresses are not allowed"))
+        val json = Json.parseToJsonElement(responseBody).jsonObject
+        assertEquals("fail", json["status"]?.jsonPrimitive?.content)
+        assertEquals("private range", json["message"]?.jsonPrimitive?.content)
+        assertEquals(LOCALHOST_IP, json["query"]?.jsonPrimitive?.content)
     }
 
     @Test
     fun testCountryEndpointWithPrivateIpAddress() = testApplication {
-        val response = client.get("/country") {
-            header("X-Forwarded-For", PRIVATE_IP_ADDRESS)
-        }
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        val response = client.get("/json/${PRIVATE_IP_ADDRESS}")
+        assertEquals(HttpStatusCode.OK, response.status)
 
         val responseBody = response.bodyAsText()
-        assertTrue(responseBody.contains("Local or private IP addresses are not allowed"))
+        val json = Json.parseToJsonElement(responseBody).jsonObject
+
+        assertEquals("fail", json["status"]?.jsonPrimitive?.content)
+        assertEquals("private range", json["message"]?.jsonPrimitive?.content)
+        assertEquals(PRIVATE_IP_ADDRESS, json["query"]?.jsonPrimitive?.content)
     }
 
     @Test
     fun testCountryEndpointWithInvalidIpAddress() = testApplication {
-        val response = client.get("/country") {
-            header("X-Forwarded-For", INVALID_IP_ADDRESS)
-        }
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
-
-        val responseBody = response.bodyAsText()
-        assertTrue(responseBody.contains("Invalid IP address"))
-    }
-
-    @Test
-    fun testCountryEndpointWithMultipleForwardedIps() = testApplication {
-        val multipleIps = "$GOOGLE_DNS_IP, $PRIVATE_IP_ADDRESS, $LOCALHOST_IP"
-        val response = client.get("/country") {
-            header("X-Forwarded-For", multipleIps)
-        }
+        val response = client.get("/json/${INVALID_IP_ADDRESS}")
         assertEquals(HttpStatusCode.OK, response.status)
 
         val responseBody = response.bodyAsText()
         val json = Json.parseToJsonElement(responseBody).jsonObject
-        assertTrue(json.containsKey("country"))
 
-        val countryValue = json["country"]?.jsonPrimitive?.content
-        assertNotNull(countryValue)
-        assertEquals(EXPECTED_US_COUNTRY_CODE, countryValue)
-    }
-    @Test
-    fun testCountryEndpointWithNonsenseIp() = testApplication {
-        val response = client.get("/country") {
-            header("X-Forwarded-For", "not.an.ip")
-        }
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        assertEquals("fail", json["status"]?.jsonPrimitive?.content)
+        assertTrue(json["message"]?.jsonPrimitive?.content?.isNotEmpty() == true)
+        assertEquals(INVALID_IP_ADDRESS, json["query"]?.jsonPrimitive?.content)
     }
 
     @Test
-    fun testCountryEndpointWithXRealIpHeader() = testApplication {
-        val response = client.get("/country") {
-            header("X-Real-IP", GOOGLE_DNS_IP)
-        }
+    fun testCountryEndpointWithDomainName() = testApplication {
+        val response = client.get("/json/google.com")
         assertEquals(HttpStatusCode.OK, response.status)
 
         val responseBody = response.bodyAsText()
         val json = Json.parseToJsonElement(responseBody).jsonObject
-        assertTrue(json.containsKey("country"))
 
-        val countryValue = json["country"]?.jsonPrimitive?.content
-        assertNotNull(countryValue)
-        assertEquals(EXPECTED_US_COUNTRY_CODE, countryValue)
+        assertEquals("success", json["status"]?.jsonPrimitive?.content)
+        assertNotNull(json["countryCode"]?.jsonPrimitive?.content)
+        assertEquals("google.com", json["query"]?.jsonPrimitive?.content)
     }
 
     @Test
-    fun testCountryEndpointWithoutHeaders() = testApplication {
-        val response = client.get("/country")
-
-        assertTrue(
-            response.status == HttpStatusCode.OK ||
-                    response.status == HttpStatusCode.InternalServerError
-        )
+    fun testCountryEndpointWithEmptyHost() = testApplication {
+        val response = client.get("/json/")
+        assertEquals(HttpStatusCode.BadRequest, response.status)
 
         val responseBody = response.bodyAsText()
-        if (response.status == HttpStatusCode.OK) {
-            val json = Json.parseToJsonElement(responseBody).jsonObject
-            assertTrue(json.containsKey("country"))
-            val countryValue = json["country"]?.jsonPrimitive?.content
-            assertNotNull(countryValue)
+        val json = Json.parseToJsonElement(responseBody).jsonObject
+
+        assertEquals("fail", json["status"]?.jsonPrimitive?.content)
+        assertEquals("Invalid query", json["message"]?.jsonPrimitive?.content)
+    }
+
+    @Test
+    fun testCountryEndpointWithoutPathParameter() = testApplication {
+        val response = client.get("/json")
+        assertEquals(HttpStatusCode.NotFound, response.status)
+    }
+
+    @Test
+    fun testCountryEndpointWithNonsenseInput() = testApplication {
+        val response = client.get("/json/not.an.ip.or.domain")
+        assertEquals(HttpStatusCode.OK, response.status)
+
+        val responseBody = response.bodyAsText()
+        val json = Json.parseToJsonElement(responseBody).jsonObject
+
+        assertEquals("fail", json["status"]?.jsonPrimitive?.content)
+        assertTrue(json["message"]?.jsonPrimitive?.content?.isNotEmpty() == true)
+        assertEquals("not.an.ip.or.domain", json["query"]?.jsonPrimitive?.content)
+    }
+
+    @Test
+    fun testResponseFormatMatchesIpApiCom() = testApplication {
+        val response = client.get("/json/${GOOGLE_DNS_IP}")
+        assertEquals(HttpStatusCode.OK, response.status)
+
+        val responseBody = response.bodyAsText()
+        val json = Json.parseToJsonElement(responseBody).jsonObject
+
+        assertTrue(json.containsKey("status"))
+        assertTrue(json.containsKey("countryCode"))
+        assertTrue(json.containsKey("country"))
+        assertTrue(json.containsKey("query"))
+        assertTrue(json.containsKey("message"))
+
+        val status = json["status"]?.jsonPrimitive?.content
+        assertTrue(status == "success" || status == "fail")
+
+        if (status == "success") {
+            assertNotNull(json["countryCode"]?.jsonPrimitive?.content)
+            assertTrue(json["countryCode"]?.jsonPrimitive?.content?.length == 2)
         }
     }
 

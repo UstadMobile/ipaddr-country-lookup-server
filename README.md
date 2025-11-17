@@ -21,7 +21,7 @@ To build or run the project, use one of the following tasks:
 
 ## Test the Endpoint
 
-curl -H "X-Forwarded-For: 8.8.8.8" http://localhost:8080/country
+curl http://localhost:8080/json/8.8.8.8
 
 ```
 2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
