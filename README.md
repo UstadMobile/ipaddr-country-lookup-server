@@ -1,3 +1,10 @@
+IP Address Country Lookup Server
+
+A self hosted server that returns the country for a given IP address or domain name. The response format matches the public ip-api.com API, so this server can be used as a self hosted alternative.
+
+Country data is resolved locally using the MaxMind GeoLite2 Country database.
+
+
 ## Building & Running
 
 To build or run the project, use one of the following tasks:
@@ -12,12 +19,16 @@ To build or run the project, use one of the following tasks:
  - Create MaxMind Account (free): https://www.maxmind.com/en/geolite2/signup
  - Download Database: Get GeoLite2-Country.mmdb in binary format
  - Set the environment variable
+ - 
+## Environment variables
 
- export GEO_DATABASE_PATH=/path/to/GeoLite2-Country.mmdb
+The following environment variables can be set:
+
+` export GEO_DATABASE_PATH=/path/to/GeoLite2-Country.mmdb`
 
  Then,
 
- ./gradlew run
+` ./gradlew run`
  
 ## API Reference
 

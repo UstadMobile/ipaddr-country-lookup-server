@@ -1,11 +1,12 @@
 package com.ustadmobile.countrylookupserver.routes
 
 import com.ustadmobile.countrylookupserver.data.CountryResponse
+import com.ustadmobile.countrylookupserver.service.GeoIpService
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import com.ustadmobile.countrylookupserver.service.GeoIpService
-import io.ktor.http.HttpStatusCode
 import org.slf4j.LoggerFactory
 
 /**
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory
  */
 fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
     val logger = LoggerFactory.getLogger("GeoIpRoutes")
+
     get("/json/{host}") {
         val host = call.parameters["host"]
         logger.debug("Processing request for host: $host")
@@ -39,6 +41,7 @@ fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
 
         try {
             val countryResponse = geoIpService.getCountryForIp(host)
+            call.response.header(HttpHeaders.CacheControl, "max-age=$CACHE_MAX_AGE_SECONDS")
             call.respond(countryResponse)
         } catch (e: Exception) {
             logger.error("Error processing host: $host", e)
@@ -51,6 +54,7 @@ fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
             )
         }
     }
+
     get("/json/") {
         call.respond(
             HttpStatusCode.BadRequest,
@@ -62,3 +66,6 @@ fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
         )
     }
 }
+
+/** One day. A server's country changes very rarely, so responses can be cached for a long time. */
+private const val CACHE_MAX_AGE_SECONDS = 86_400
