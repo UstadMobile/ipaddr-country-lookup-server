@@ -8,10 +8,20 @@ import com.ustadmobile.countrylookupserver.service.GeoIpService
 import io.ktor.http.HttpStatusCode
 import org.slf4j.LoggerFactory
 
+/**
+ * Configures the GeoIP lookup routes.
+ *
+ * Provides `GET /json/{host}` where `{host}` is an IP address
+ * (e.g. 8.8.8.8) or domain name (e.g. google.com).
+ *
+ * Response format matches the public ip-api.com API so this server
+ * can be used as a self-hosted alternative.
+ *
+ * @see <a href="https://ip-api.com/docs/api:json">ip-api.com JSON API</a>
+ */
 fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
     val logger = LoggerFactory.getLogger("GeoIpRoutes")
-
-    get("/api/country/{host}") {
+    get("/json/{host}") {
         val host = call.parameters["host"]
         logger.debug("Processing request for host: $host")
 
@@ -40,5 +50,15 @@ fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
                 )
             )
         }
+    }
+    get("/json/") {
+        call.respond(
+            HttpStatusCode.BadRequest,
+            CountryResponse(
+                status = "fail",
+                message = "Invalid query",
+                query = ""
+            )
+        )
     }
 }
