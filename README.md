@@ -18,15 +18,19 @@ To build or run the project, use one of the following tasks:
  Then,
 
  ./gradlew run
+ 
+## API Reference
 
-## Test the Endpoint
+This server implements the same response format as the public [ip-api.com](https://ip-api.com) API.
 
-curl http://localhost:8080/json/8.8.8.8
+### Endpoint
+GET /json/{host}
 
-```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
-```
+Where `{host}` is an IP address or domain name.
+
+### Reference
+- Public API this format is based on: https://ip-api.com/docs/api:json
+
 ## License
 
 This project is licensed under the MIT License.
