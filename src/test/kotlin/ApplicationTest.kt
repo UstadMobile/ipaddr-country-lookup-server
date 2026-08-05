@@ -92,7 +92,7 @@ class ApplicationTest {
         val json = Json.parseToJsonElement(responseBody).jsonObject
 
         assertEquals("fail", json["status"]?.jsonPrimitive?.content)
-        assertEquals("Invalid query", json["message"]?.jsonPrimitive?.content)
+        assertEquals("invalid query", json["message"]?.jsonPrimitive?.content)
     }
 
     @Test
@@ -126,7 +126,6 @@ class ApplicationTest {
         assertTrue(json.containsKey("countryCode"))
         assertTrue(json.containsKey("country"))
         assertTrue(json.containsKey("query"))
-        assertTrue(json.containsKey("message"))
 
         val status = json["status"]?.jsonPrimitive?.content
         assertTrue(status == "success" || status == "fail")

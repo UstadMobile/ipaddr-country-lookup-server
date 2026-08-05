@@ -60,7 +60,7 @@ fun Route.configureGeoIpRoutes(geoIpService: GeoIpService) {
             HttpStatusCode.BadRequest,
             CountryResponse(
                 status = "fail",
-                message = "Invalid query",
+                message = "invalid query",
                 query = ""
             )
         )

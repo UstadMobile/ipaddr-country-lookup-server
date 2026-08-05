@@ -45,7 +45,7 @@ class GeoIpService(databasePath: String) {
                 logger.debug("Successfully resolved IP $ipAddress to country: $countryCode")
                 CountryResponse(
                     status = "success",
-                    countryCode = countryCode,  // THIS IS THE FIELD YOUR CLIENT EXPECTS
+                    countryCode = countryCode,
                     country = response.country?.name,
                     query = ipAddress
                 )
