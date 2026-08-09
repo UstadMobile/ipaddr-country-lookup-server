@@ -69,7 +69,7 @@ class GeoIpService(databasePath: String) {
             logger.error("Unexpected error looking up country for IP: $ipAddress", e)
             return CountryResponse(
                 status = "fail",
-                message = "query failed",
+                message = "Query failed",
                 query = ipAddress
             )
         }

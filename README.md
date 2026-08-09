@@ -1,9 +1,9 @@
 IP Address Country Lookup Server
 
-A self hosted server that returns the country for a given IP address or domain name. The response format matches the public ip-api.com API, so this server can be used as a self hosted alternative.
+A self-hosted server that returns the country for a given IP address or domain name. The response 
+format matches the public ip-api.com API, so this server can be used as a self-hosted alternative.
 
 Country data is resolved locally using the MaxMind GeoLite2 Country database.
-
 
 ## Building & Running
 
@@ -14,22 +14,37 @@ To build or run the project, use one of the following tasks:
 | `./gradlew test`              | Run the tests                                                        |
 | `./gradlew build`             | Build everything                                                     |
 
-## Set Up GeoLite2 Database
+## Setup GeoLite2 Database
 
  - Create MaxMind Account (free): https://www.maxmind.com/en/geolite2/signup
- - Download Database: Get GeoLite2-Country.mmdb in binary format
- - Set the environment variable
- - 
-## Environment variables
+ - Download Database: Get GeoLite2-Country.mmdb in binary format 
+ - Make the database accessible to the app in any of the following ways:
+   - Put the GeoLite2-Country.mmdb file in the working directory
+   - Set the environment variable `GEO_DATABASE_PATH` to the path of the GeoLite2-Country.mmdb file
+   - Set the `geo.database.path` property in the application.conf file to the path of the GeoLite2-Country.mmdb file 
 
-The following environment variables can be set:
+## Running
 
-` export GEO_DATABASE_PATH=/path/to/GeoLite2-Country.mmdb`
-
- Then,
+From source:
 
 ` ./gradlew run`
- 
+
+Using a distribution:
+
+
+Then use any api client to do an IP address GeoLookup:
+
+e.g.
+```shell
+curl http://localhost:8080/json/google.com
+{
+    "status": "success",
+    "countryCode": "US",
+    "country": "United States",
+    "query": "google.com"
+}
+```
+
 ## API Reference
 
 This server implements the same response format as the public [ip-api.com](https://ip-api.com) API.
@@ -48,4 +63,7 @@ This project is licensed under the MIT License.
 
 ## Attribution
 
-This product includes GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com).
+This product uses GeoLite2 data created by MaxMind, available from [https://www.maxmind.com](https://www.maxmind.com).
+You must download the GeoLite IP address database yourself and accept/abide by the GeoLite End User
+License Agreement.
+
